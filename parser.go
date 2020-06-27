@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"fmt"
-	"time"
 	"strconv"
+	"time"
 )
 
 // Parser represents a parser.
@@ -60,12 +60,6 @@ func (p *Parser) Parse() ([]Beat, error) {
 	var parseErr error
 	pos := 0
 	for {
-		if pos == 3 {
-			beats = append(beats, *currentBeat)
-			currentBeat = &Beat{}
-			pos = 0
-		}
-
 		// Read a field.
 		tok, lit := p.scanIgnoreWhitespace()
 		if tok != IDENT {
@@ -74,23 +68,20 @@ func (p *Parser) Parse() ([]Beat, error) {
 
 		switch pos {
 		case 0:
-			fmt.Printf("A: this is a timestamp: %s\n", lit)
 			// we know from harmonixset that the float timestamp is in s
 			tstampFloatSeconds, err := strconv.ParseFloat(lit, 64)
 			if err != nil {
 				log.Fatalf("parse error %v on line number TODO", err)
 			}
-			us := fmt.Sprintf("%dus", int(tstampFloatSeconds * 1000000.0))
+			us := fmt.Sprintf("%dus", int(tstampFloatSeconds*1000000.0))
 			if currentBeat.Timestamp, parseErr = time.ParseDuration(us); parseErr != nil {
 				log.Fatalf("parse error %v on line number TODO", parseErr)
 			}
 		case 1:
-			fmt.Printf("B: this is a beat: %s\n", lit)
 			if currentBeat.Beat, parseErr = strconv.Atoi(lit); parseErr != nil {
 				log.Fatalf("parse error %v on line number TODO", parseErr)
 			}
 		case 2:
-			fmt.Printf("C: this is a bar: %s\n", lit)
 			if currentBeat.Bar, parseErr = strconv.Atoi(lit); parseErr != nil {
 				log.Fatalf("parse error %v (line/char no TODO)", parseErr)
 			}
@@ -98,11 +89,20 @@ func (p *Parser) Parse() ([]Beat, error) {
 			log.Fatal("too many tokens")
 		}
 
+		pos++
+
+		if pos == 3 {
+			beats = append(beats, *currentBeat)
+			currentBeat = &Beat{}
+			pos = 0
+		}
+
+		// we're done here
 		if tok, _ := p.scanIgnoreWhitespace(); tok != IDENT {
-			p.unscan()
 			break
 		}
-		pos++
+		// otherwise rewind
+		p.unscan()
 	}
 
 	return beats, nil

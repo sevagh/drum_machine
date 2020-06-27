@@ -2,9 +2,8 @@ package main
 
 import (
 	"bufio"
-	"io"
 	"bytes"
-	"fmt"
+	"io"
 )
 
 type Token int
@@ -75,7 +74,6 @@ func (s *Scanner) read() rune {
 // unread places the previously read rune back on the reader.
 func (s *Scanner) unread() { _ = s.r.UnreadRune() }
 
-
 // Scan returns the next token and literal value.
 func (s *Scanner) Scan() (tok Token, lit string) {
 	// Read the next rune.
@@ -86,7 +84,7 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	if isWhitespace(ch) {
 		s.unread()
 		return s.scanWhitespace()
-	} else if isDigit(ch) || isDecimalPoint(ch) {
+	} else if isDigit(ch) {
 		s.unread()
 		return s.scanIdent()
 	}
@@ -131,17 +129,13 @@ func (s *Scanner) scanIdent() (tok Token, lit string) {
 	// Read every subsequent ident character into the buffer.
 	// Non-ident characters and EOF will cause the loop to exit.
 	for {
-		ch := s.read()
-		if ch == eof {
+		if ch := s.read(); ch == eof {
 			break
-		}
-
-		if isDigit(ch) || isDecimalPoint(ch) {
-			fmt.Printf("DEBUG: writing %c for IDENT\n", ch)
-			_, _ = buf.WriteRune(ch)
-		} else {
+		} else if !(isDigit(ch) || isDecimalPoint(ch)) {
 			s.unread()
 			break
+		} else {
+			buf.WriteRune(ch)
 		}
 	}
 

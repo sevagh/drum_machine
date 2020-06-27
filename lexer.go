@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"bytes"
+	"fmt"
 )
 
 type Token int
@@ -16,12 +17,31 @@ const (
 	IDENT
 )
 
+func (t *Token) String() string {
+	switch *t {
+	case ILLEGAL:
+		return "illegal"
+	case EOF:
+		return "eof"
+	case WS:
+		return "whitespace"
+	case IDENT:
+		return "identifier"
+	default:
+		return "fatal: undefined"
+	}
+}
+
 var (
 	eof = rune(0)
 )
 
 func isWhitespace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
+}
+
+func isNewline(ch rune) bool {
+	return ch == '\n' || ch == '\r'
 }
 
 func isDigit(ch rune) bool {
@@ -66,7 +86,7 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	if isWhitespace(ch) {
 		s.unread()
 		return s.scanWhitespace()
-	} else if isDigit(ch) {
+	} else if isDigit(ch) || isDecimalPoint(ch) {
 		s.unread()
 		return s.scanIdent()
 	}
@@ -111,13 +131,17 @@ func (s *Scanner) scanIdent() (tok Token, lit string) {
 	// Read every subsequent ident character into the buffer.
 	// Non-ident characters and EOF will cause the loop to exit.
 	for {
-		if ch := s.read(); ch == eof {
+		ch := s.read()
+		if ch == eof {
 			break
-		} else if !isDigit(ch) && !isDecimalPoint(ch) {
+		}
+
+		if isDigit(ch) || isDecimalPoint(ch) {
+			fmt.Printf("DEBUG: writing %c for IDENT\n", ch)
+			_, _ = buf.WriteRune(ch)
+		} else {
 			s.unread()
 			break
-		} else {
-			_, _ = buf.WriteRune(ch)
 		}
 	}
 

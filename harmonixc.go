@@ -2,8 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func main() {
-	fmt.Println("hello world")
+	p := NewParser(os.Stdin)
+	_, err := p.Parse()
+	if err != nil {
+		fmt.Printf("err: %+v\n", err)
+	}
 }

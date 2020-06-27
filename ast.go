@@ -7,3 +7,7 @@ type Beat struct {
 	Beat	  int
 	Bar		  int
 }
+
+type Bar []*Beat
+
+type Song []*Bar

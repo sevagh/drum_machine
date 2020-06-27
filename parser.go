@@ -53,35 +53,51 @@ func (p *Parser) scanIgnoreWhitespace() (tok Token, lit string) {
 	return
 }
 
-func (p *Parser) Parse() (*Beat, error) {
-	beat := &Beat{}
+func (p *Parser) Parse() ([]Beat, error) {
+	beats := []Beat{}
+	currentBeat := &Beat{}
 
 	var parseErr error
 	pos := 0
 	for {
+		if pos == 3 {
+			beats = append(beats, *currentBeat)
+			currentBeat = &Beat{}
+			pos = 0
+		}
+
 		// Read a field.
 		tok, lit := p.scanIgnoreWhitespace()
 		if tok != IDENT {
 			return nil, fmt.Errorf("found %q, expected field", lit)
 		}
+
 		switch pos {
 		case 0:
-			if beat.Timestamp, parseErr = time.ParseDuration(lit); parseErr != nil {
-				log.Fatal("parse error %v on line number TODO", parseErr)
+			fmt.Printf("A: this is a timestamp: %s\n", lit)
+			// we know from harmonixset that the float timestamp is in s
+			tstampFloatSeconds, err := strconv.ParseFloat(lit, 64)
+			if err != nil {
+				log.Fatalf("parse error %v on line number TODO", err)
+			}
+			us := fmt.Sprintf("%dus", int(tstampFloatSeconds * 1000000.0))
+			if currentBeat.Timestamp, parseErr = time.ParseDuration(us); parseErr != nil {
+				log.Fatalf("parse error %v on line number TODO", parseErr)
 			}
 		case 1:
-			if beat.Beat, parseErr = strconv.Atoi(lit); parseErr != nil {
-				log.Fatal("parse error %v on line number TODO", parseErr)
+			fmt.Printf("B: this is a beat: %s\n", lit)
+			if currentBeat.Beat, parseErr = strconv.Atoi(lit); parseErr != nil {
+				log.Fatalf("parse error %v on line number TODO", parseErr)
 			}
 		case 2:
-			if beat.Bar, parseErr = strconv.Atoi(lit); parseErr != nil {
-				log.Fatal("parse error %v (line/char no TODO)", parseErr)
+			fmt.Printf("C: this is a bar: %s\n", lit)
+			if currentBeat.Bar, parseErr = strconv.Atoi(lit); parseErr != nil {
+				log.Fatalf("parse error %v (line/char no TODO)", parseErr)
 			}
 		default:
-			log.Fatal("too many tokens (line/char no TODO), %s is extra", lit)
+			log.Fatal("too many tokens")
 		}
 
-		// If the next token is not an ident then break the loop.
 		if tok, _ := p.scanIgnoreWhitespace(); tok != IDENT {
 			p.unscan()
 			break
@@ -89,5 +105,5 @@ func (p *Parser) Parse() (*Beat, error) {
 		pos++
 	}
 
-	return beat, nil
+	return beats, nil
 }

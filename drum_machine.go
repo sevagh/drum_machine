@@ -13,4 +13,6 @@ func main() {
 	}
 	fmt.Printf("beats: %+v\n", beats)
 	fmt.Printf("len beats: %d\n", len(beats))
+
+	LibMetroTest()
 }

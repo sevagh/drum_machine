@@ -6,17 +6,14 @@ import "C"
 
 import (
 	"fmt"
+	"github.com/sevagh/drum_machine/internal"
 	"log"
 	"os"
 	"time"
 )
 
-// 125bpm vs 120bpm = 0.48 vs 0.5
-const TempoAllowedVarianceSecs float64 = 0.02
-const TempoAllowedVarianceBpm float64 = 5
-
 func main() {
-	p := NewParser(os.Stdin)
+	p := internal.NewParser(os.Stdin)
 	beats, err := p.Parse()
 	if err != nil {
 		log.Fatalf("parse err: %+v\n", err)
@@ -27,7 +24,7 @@ func main() {
 		return
 	}
 
-	tempo, firstTimestampUs, song, err := validateBeats(beats)
+	tempo, firstTimestampUs, song, err := internal.ValidateBeats(beats)
 	if err != nil {
 		log.Fatalf("song error: %+v\n", err)
 	}

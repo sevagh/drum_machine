@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestTokenToString(t *testing.T) {
@@ -79,7 +79,7 @@ func TestScanReadsUntilEof(t *testing.T) {
 			}
 			return
 		}
-		if ctr < 6 && next != rune(97 + ctr) {
+		if ctr < 6 && next != rune(97+ctr) {
 			t.Fatalf("bad")
 		}
 		if ctr == 6 && !isWhitespace(next) {
@@ -87,7 +87,7 @@ func TestScanReadsUntilEof(t *testing.T) {
 			t.Logf("next should've been: %c\n", rune(97+ctr))
 			t.Fatalf("bad")
 		}
-		if ctr > 6 && next != rune(48 - 6 + ctr) {
+		if ctr > 6 && next != rune(48-6+ctr) {
 			t.Errorf("bad")
 		}
 		ctr++

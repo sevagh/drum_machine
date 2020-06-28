@@ -32,11 +32,20 @@ func (t *Token) String() string {
 }
 
 var (
-	eof = rune(0)
+	eof          = rune(0)
+	CURR_LINE_NO = 1
+	CURR_COL_NO  = 0
 )
 
 func isWhitespace(ch rune) bool {
+	if ch == '\n' {
+		CURR_LINE_NO++
+	}
 	return ch == ' ' || ch == '\t' || ch == '\n'
+}
+
+func isNewline(ch rune) bool {
+	return ch == '\n'
 }
 
 func isDigit(ch rune) bool {
@@ -64,11 +73,15 @@ func (s *Scanner) read() rune {
 	if err != nil {
 		return eof
 	}
+	CURR_COL_NO++
 	return ch
 }
 
 // unread places the previously read rune back on the reader.
-func (s *Scanner) unread() { _ = s.r.UnreadRune() }
+func (s *Scanner) unread() {
+	_ = s.r.UnreadRune()
+	CURR_COL_NO--
+}
 
 // Scan returns the next token and literal value.
 func (s *Scanner) Scan() (tok Token, lit string) {
@@ -79,6 +92,9 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	// If we see a digit then consume as an ident.
 	if isWhitespace(ch) {
 		s.unread()
+		if isNewline(ch) {
+			CURR_LINE_NO--
+		}
 		return s.scanWhitespace()
 	} else if isDigit(ch) { // an ident shouldn't start with a decimal point e.g. timestamp = .356
 		s.unread()

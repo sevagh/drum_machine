@@ -39,10 +39,6 @@ func isWhitespace(ch rune) bool {
 	return ch == ' ' || ch == '\t' || ch == '\n'
 }
 
-func isNewline(ch rune) bool {
-	return ch == '\n' || ch == '\r'
-}
-
 func isDigit(ch rune) bool {
 	return (ch >= '0' && ch <= '9')
 }
@@ -84,9 +80,12 @@ func (s *Scanner) Scan() (tok Token, lit string) {
 	if isWhitespace(ch) {
 		s.unread()
 		return s.scanWhitespace()
-	} else if isDigit(ch) {
+	} else if isDigit(ch) { // an ident shouldn't start with a decimal point e.g. timestamp = .356
 		s.unread()
 		return s.scanIdent()
+	} else {
+		// there's no other possible correct first character
+		return ILLEGAL, string(ch)
 	}
 
 	// Otherwise read the individual character.
@@ -124,7 +123,13 @@ func (s *Scanner) scanWhitespace() (tok Token, lit string) {
 func (s *Scanner) scanIdent() (tok Token, lit string) {
 	// Create a buffer and read the current character into it.
 	var buf bytes.Buffer
-	buf.WriteRune(s.read())
+
+	firstCh := s.read()
+	if !(isDigit(firstCh) || isDecimalPoint(firstCh)) {
+		return ILLEGAL, ""
+	}
+
+	buf.WriteRune(firstCh)
 
 	// Read every subsequent ident character into the buffer.
 	// Non-ident characters and EOF will cause the loop to exit.
@@ -139,6 +144,5 @@ func (s *Scanner) scanIdent() (tok Token, lit string) {
 		}
 	}
 
-	// Otherwise return as a regular identifier.
 	return IDENT, buf.String()
 }

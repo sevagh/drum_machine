@@ -1,10 +1,18 @@
-Pipe [harmonixset](https://github.com/urinieto/harmonixset) beat txt files through `drum_machine` to listen to a clicktrack.
+Pipe [harmonixset](https://github.com/urinieto/harmonixset) beat txt files through drum_machine to listen to a clicktrack.
+
+The file format drum_machine supports are the beat annotations here: [harmonixset/datasets/beats_and_downbeats](https://github.com/urinieto/harmonixset/tree/master/dataset/beats_and_downbeats)
 
 The clicktrack is generated using [libmetro](https://github.com/sevagh/libmetro). The beat txt files are parsed using a handwritten tokenizer/lexer and parser, based on [this tutorial](https://blog.gopheracademy.com/advent-2014/parsers-lexers/).
 
 ### Mapping harmonix to libmetro
 
-beats, bars, notes, measures, etc.
+libmetro provides the following constructs:
+
+* _beats_ are represented with _note_ objects, which are wrappers around a vector of floats generated from Stk. libmetro is more flexible but the C wrapper and use in drum_machine are limited to the MIDI Drum instrument, and 2 'timbres' of beata 
+* _bars_ are represented with _measure_ objects, which are collections of a sequence of _notes_ (can be padded with silence)
+* the _tempo_ of the song is configured on the _metronome_ object, which can register a sequence of _measures_ to loop through
+
+Although the result is not mind-blowingly exciting given the tempo and beat structure of pop songs is stable, drum_machine still a fun combination of several projects.
 
 ### Compile
 

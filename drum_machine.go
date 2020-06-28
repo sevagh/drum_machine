@@ -37,29 +37,31 @@ func main() {
 
 	var ret C.int
 
-	for _, bar := range song {
-		downbeat := C.note_create_drum_downbeat_1()
-		defer C.note_destroy(downbeat)
+	// build a repeating metronome from the first bar
+	// TODO: all bars are probably repeating since this is pop
+	// but more complicated bars can coexist by discovering their
+	// least common multiple and adjusting the bpm and adding silences
+	// accordingly. libmetro supports this - see
+	// https://github.com/sevagh/libmetro/blob/master/examples/poly_43.cpp#L39
 
-		beat := C.note_create_drum_beat_1()
-		defer C.note_destroy(beat)
+	downbeat := C.note_create_drum_downbeat_1()
+	defer C.note_destroy(downbeat)
 
-		measure := C.measure_create(C.int(bar.NBeats))
-		defer C.measure_destroy(measure)
+	beat := C.note_create_drum_beat_1()
+	defer C.note_destroy(beat)
 
-		if ret = C.measure_set_note(measure, C.int(0), downbeat); ret != 0 {
+	measure := C.measure_create(C.int(song[0].NBeats))
+	defer C.measure_destroy(measure)
+
+	C.measure_set_note(measure, C.int(0), downbeat)
+	for i := 1; i < song[0].NBeats; i++ {
+		if ret = C.measure_set_note(measure, C.int(i), beat); ret != 0 {
 			log.Fatalf("error in libmetro C wrapper: %d\n", ret)
 		}
+	}
 
-		for i := 1; i < bar.NBeats; i++ {
-			if ret = C.measure_set_note(measure, C.int(i), beat); ret != 0 {
-				log.Fatalf("error in libmetro C wrapper: %d\n", ret)
-			}
-		}
-
-		if ret = C.metronome_add_measure(metro, measure); ret != 0 {
-			log.Fatalf("error in libmetro C wrapper: %d\n", ret)
-		}
+	if ret = C.metronome_add_measure(metro, measure); ret != 0 {
+		log.Fatalf("error in libmetro C wrapper: %d\n", ret)
 	}
 
 	// do an initial sleep of the first timestamp

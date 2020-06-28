@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"strconv"
-	"time"
 )
 
 // Parser represents a parser.
@@ -69,12 +68,7 @@ func (p *Parser) Parse() ([]Beat, error) {
 		switch pos {
 		case 0:
 			// we know from harmonixset that the float timestamp is in s
-			tstampFloatSeconds, err := strconv.ParseFloat(lit, 64)
-			if err != nil {
-				log.Fatalf("parse error %v on line number TODO", err)
-			}
-			us := fmt.Sprintf("%dus", int(tstampFloatSeconds*1000000.0))
-			if currentBeat.Timestamp, parseErr = time.ParseDuration(us); parseErr != nil {
+			if currentBeat.Timestamp, parseErr = strconv.ParseFloat(lit, 64); parseErr != nil {
 				log.Fatalf("parse error %v on line number TODO", parseErr)
 			}
 		case 1:

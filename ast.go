@@ -1,13 +1,14 @@
 package main
 
-import "time"
-
 type Beat struct {
-	Timestamp time.Duration
+	Timestamp float64
 	Beat      int
 	Bar       int
 }
 
-type Bar []*Beat
+type Bar struct {
+	Tempo  float64
+	NBeats int
+}
 
-type Song []*Bar
+type Song []Bar

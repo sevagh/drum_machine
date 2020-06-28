@@ -71,7 +71,7 @@ func (p *Parser) Parse() ([]Beat, error) {
 		}
 
 		if tok != IDENT {
-			return nil, fmt.Errorf("found %q, expected field", lit)
+			return nil, fmt.Errorf("found %q, expected field on line %d, col %d", lit, CURR_LINE_NO, CURR_COL_NO)
 		}
 
 		switch pos {

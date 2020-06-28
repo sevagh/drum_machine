@@ -8,7 +8,7 @@ The clicktrack is generated using [libmetro](https://github.com/sevagh/libmetro)
 
 libmetro provides the following constructs:
 
-* _beats_ are represented with _note_ objects, which are wrappers around a vector of floats generated from Stk. libmetro is more flexible but the C wrapper and use in drum_machine are limited to the MIDI Drum instrument, and 2 'timbres' of beata 
+* _beats_ are represented with _note_ objects, which are wrappers around a vector of floats generated from Stk. libmetro is more flexible but the C wrapper and use in drum_machine are limited to the MIDI Drum instrument, and 2 'timbres' of beats
 * _bars_ are represented with _measure_ objects, which are collections of a sequence of _notes_ (can be padded with silence)
 * the _tempo_ of the song is configured on the _metronome_ object, which can register a sequence of _measures_ to loop through
 

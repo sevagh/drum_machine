@@ -8,7 +8,7 @@ const (
 	fuzzDiscard     = -1
 )
 
-func Fuzz(in []byte) int {
+func FuzzDrummachine(in []byte) int {
 	p := NewParser(bytes.NewReader(in))
 
 	_, err := p.Parse()

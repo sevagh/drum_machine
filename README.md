@@ -2,7 +2,7 @@ Pipe [harmonixset](https://github.com/urinieto/harmonixset) beat txt files throu
 
 The file format drum_machine supports are the beat annotations here: [harmonixset/datasets/beats_and_downbeats](https://github.com/urinieto/harmonixset/tree/master/dataset/beats_and_downbeats)
 
-The clicktrack is generated using [libmetro](https://github.com/sevagh/libmetro). The beat txt files are parsed using a handwritten tokenizer/lexer and parser, based on [this tutorial](https://blog.gopheracademy.com/advent-2014/parsers-lexers/). drum_machine is fuzz tested with the entire harmonixset dataset as a corpus, and fuzzing is done with [go-fuzz](https://github.com/dvyukov/go-fuzz) ([tutorial](https://dgraph.io/blog/post/continuous-fuzzing-with-go/)).
+The clicktrack is generated using [libmetro](https://github.com/sevagh/libmetro). The beat txt files are parsed using a handwritten tokenizer/lexer and parser, based on [this tutorial](https://blog.gopheracademy.com/advent-2014/parsers-lexers/). drum_machine is fuzz tested with the entire harmonixset dataset as a corpus, and fuzzing is done with [go-fuzz](https://github.com/dvyukov/go-fuzz) ([tutorial](https://dgraph.io/blog/post/continuous-fuzzing-with-go/)). Run fuzz test with `./fuzz_test.sh`.
 
 ### Mapping harmonix to libmetro
 
